@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -95,14 +94,11 @@ func (bh *basicHandler) handleReports(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("handle reports for: ", tc.Username)
 
-	randomText := generateRandomText(1024) // 1KB random text
-
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Disposition", "attachment; filename=random.txt")
-	w.Header().Set("Content-Length", strconv.Itoa(len(randomText)))
 
-	io.WriteString(w, randomText)
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(resp))
 }
 
 func (bh *basicHandler) introspectToken(token string) (*TokenClaims, error) {
@@ -178,18 +174,6 @@ type TokenClaims struct {
 	RealmAccess struct {
 		Roles []string `json:"roles"`
 	} `json:"realm_access"`
-}
-
-// generateRandomText generates a random string of given length.
-func generateRandomText(n int) string {
-	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
-	rand.Seed(time.Now().UnixNano())
-
-	b := make([]byte, n)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
 }
 
 var resp = `

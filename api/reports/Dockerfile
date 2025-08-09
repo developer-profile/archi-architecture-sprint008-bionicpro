@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.22.0-alpine
+FROM golang:1.24.6-alpine
 
 WORKDIR /build
 # Expose port
